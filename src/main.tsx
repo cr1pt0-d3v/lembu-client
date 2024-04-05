@@ -27,7 +27,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <QueryClientProvider client={queryClient}>
         <RainbowKitAuthenticationProvider
           adapter={authenticationAdapter}
-          status={'unauthenticated'}
+          status={'authenticated'}
         >
           <RainbowKitProvider>
             <ChakraProvider>
