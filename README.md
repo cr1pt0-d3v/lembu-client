@@ -1,2 +1,3 @@
-This is a [Vite](https://vitejs.dev) project bootstrapped with [`create-wagmi`](https://github.com/wevm/wagmi/tree/main/packages/create-wagmi).
 # lembu-client
+
+`npm install` - to install dependecies `npm run dev` - to start the server
