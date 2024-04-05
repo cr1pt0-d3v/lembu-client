@@ -1,43 +1,39 @@
 import { createAuthenticationAdapter } from '@rainbow-me/rainbowkit';
-import { SiweMessage } from 'siwe';
 
 export const authenticationAdapter = createAuthenticationAdapter({
   getNonce: async () => {
-    const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/nonce`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chainId: 1,
-        address: '0xEc5Ac2E77B5FEAe03fFC100F1209341B35054505',
-      }),
-    });
-    // const parsedResponse = await JSON.parse(await response.text());
-    return await JSON.parse(await response.text());
+    const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/nonce`);
+     const parsedResponse = JSON.parse(await response.text())['nonce'];
+    return parsedResponse;
   },
   createMessage: ({ nonce, address, chainId }) => {
-    return new SiweMessage({
-      domain: window.location.host,
-      address,
-      statement: 'Sign in with Ethereum to the app.',
-      uri: window.location.origin,
-      version: '1',
-      chainId,
-      nonce,
-    });
+    
+    return `${window.location.origin} wants you to sign in with your account: ${address}, Sign in with Ethereum to the app, Chain ID: ${chainId}, Nonce: ${nonce}`;
   },
   getMessageBody: ({ message }) => {
-    return message.prepareMessage();
+    return message;
   },
   verify: async ({ message, signature }) => {
+
+    //regex for eth wallet address
+    const regex = /(0x[a-fA-F0-9]{40})/;
+
+    // Extract wallet address using match() method
+    const matches = message.match(regex);
+
+    // If matches are found, extract the first match (wallet address)
+    const address = matches ? matches[0] : null;
+
     const verifyRes = await fetch(
-      `https://lembu-app-malup.ondigitalocean.app/api/verify`,
+      `${import.meta.env.VITE_SERVER_URL}/verify`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message, signature }),
+        body: JSON.stringify({ message, signature, address }),
       },
     );
-    return Boolean(verifyRes.ok);
+    const response = JSON.parse(await verifyRes.text());
+    return response["succes"] && response["token"]!=null;
   },
   signOut: async () => {
     await fetch('/api/logout');
