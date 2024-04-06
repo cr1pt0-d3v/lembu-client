@@ -10,9 +10,11 @@ import App from './App.tsx';
 import { config } from './wagmi.ts';
 
 import './index.css';
+
 import {
   RainbowKitAuthenticationProvider,
   RainbowKitProvider,
+  darkTheme,
 } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
 import { authenticationAdapter } from './authenticationAdapter.ts';
@@ -29,7 +31,18 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           adapter={authenticationAdapter}
           status={'authenticated'}
         >
-          <RainbowKitProvider>
+          <RainbowKitProvider
+            theme={darkTheme({
+              accentColor: '#7b3fe4',
+              accentColorForeground: 'white',
+              borderRadius: 'large',
+              fontStack: 'system',
+              overlayBlur: 'small',
+            })}
+            appInfo={{
+              appName: '$LEMBU',
+            }}
+          >
             <ChakraProvider>
               <Router>
                 <App />
