@@ -33,7 +33,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         >
           <RainbowKitProvider
             theme={darkTheme({
-              accentColor: '#7b3fe4',
+              accentColor: '#e20990',
               accentColorForeground: 'white',
               borderRadius: 'large',
               fontStack: 'system',
