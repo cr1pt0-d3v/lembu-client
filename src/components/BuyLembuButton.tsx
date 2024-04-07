@@ -3,8 +3,8 @@ import { Button, Link, Text } from '@chakra-ui/react';
 const BuyLembuButton = () => {
   return (
     <Button
-      bgGradient="gray.50"
-      color="#FF0080"
+      bg="transparent"
+      color="gray.50"
       _hover={{
         bgGradient: 'linear(to-b, #7928CA, #FF0080)',
         color: 'gray.50',

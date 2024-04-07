@@ -1,49 +1,88 @@
-import { Flex, Spacer, Text, Link as ExternalLink } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+import {
+  Drawer,
+  DrawerBody,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  Flex,
+  useDisclosure,
+  Spacer,
+  IconButton,
+  Box,
+} from '@chakra-ui/react';
+import { CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
 import RoutesComponent from './RoutesComponent';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import BuyLembuButton from './BuyLembuButton';
+import LembuLogo from './LembuLogo';
+import DexScreenerLink from './DexScreenerLink';
 
 const Navbar = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Flex
-      minWidth="max-content"
-      alignItems="center"
-      gap="2"
-      p={4}
-      bg="gray.900"
-    >
-      <Link to={'/'}>
-        <Text
-          bgGradient="linear(to-r, #7928CA, #FF0080)"
-          bgClip="text"
-          fontSize="2xl"
-          fontWeight="extrabold"
-        >
-          $LEMBU
-        </Text>
-      </Link>
-      <Flex>
-        <RoutesComponent />
-      </Flex>
-      <ExternalLink
-        _hover={{ textDecoration: 'none' }}
-        href="https://dexscreener.com/base/0xb147ffbf8163238e6b8987963ae31b4381f2454e"
-        isExternal
+    <Box minWidth="max-content" bg="gray.900">
+      <Flex
+        alignItems="center"
+        gap="2"
+        p={4}
+        display={['none', 'none', 'none', 'flex']}
       >
-        <Text
-          color="gray.50"
-          fontSize="xl"
-          fontWeight="extrabold"
-          _hover={{ color: '#FF0080' }}
-        >
-          DexScreener
-        </Text>
-      </ExternalLink>
-      <BuyLembuButton />
-      <Spacer />
-      <ConnectButton />
-    </Flex>
+        <LembuLogo />
+        <Spacer />
+        <Flex>
+          <RoutesComponent />
+        </Flex>
+        <DexScreenerLink />
+        <BuyLembuButton />
+        <Spacer />
+        <ConnectButton />
+      </Flex>
+      <Flex
+        p={4}
+        alignItems="center"
+        display={['flex', 'flex', 'flex', 'none']}
+      >
+        <IconButton
+          icon={<HamburgerIcon />}
+          aria-label="Open Menu"
+          fontSize="24px"
+          pl={1}
+          onClick={onOpen}
+          bg="transparent"
+          color="#FF0080"
+        />
+        <Spacer />
+        <ConnectButton />
+      </Flex>
+      <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
+        <DrawerOverlay />
+        <DrawerContent bg="gray.900" color="gray.50">
+          <DrawerHeader borderBottomWidth="1px" px={4} py={6}>
+            <Flex alignItems="center">
+              <Box>
+                <LembuLogo />
+              </Box>
+              <Spacer />
+              <IconButton
+                icon={<CloseIcon />}
+                aria-label="Close Menu"
+                size="md"
+                onClick={onClose}
+                bg="transparent"
+                color="#FF0080"
+              />
+            </Flex>
+          </DrawerHeader>
+          <DrawerBody p="4">
+            <Flex flexDir="column" align="center" gap={4}>
+              <RoutesComponent />
+              <DexScreenerLink />
+              <BuyLembuButton />
+            </Flex>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
+    </Box>
   );
 };
 
