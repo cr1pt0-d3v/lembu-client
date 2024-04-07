@@ -4,7 +4,7 @@ const HomePage = () => {
   return (
     <Box
       minH="80vh"
-      bgImage="assets/lambo-hd.jpg"
+      bgImage="/assets/lambo-hd.jpg"
       bgPosition="center"
       bgRepeat="no-repeat"
       bgSize="cover"
