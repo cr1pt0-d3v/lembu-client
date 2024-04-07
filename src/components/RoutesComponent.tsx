@@ -11,7 +11,7 @@ const CustomLink: React.FC<{ to: string; children: any }> = ({
   const isActive = useMatch({ path: resolvedPath.pathname, end: true });
 
   return (
-    <Box color={isActive ? 'tomato' : 'blue'}>
+    <Box color={isActive ? '#FF0080' : 'gray.50'} _hover={{ color: '#FF0080' }}>
       <Link to={to} {...props}>
         {children}
       </Link>
@@ -24,19 +24,13 @@ const RoutesComponent = () => {
     <>
       <CustomLink to="/">
         <Box p="2">
-          <Heading size="16px">Home</Heading>
+          <Heading size="md">Home</Heading>
         </Box>
       </CustomLink>
 
-      <CustomLink to="/signin">
+      <CustomLink to="/airdrop">
         <Box p="2">
-          <Heading size="16px">Signin</Heading>
-        </Box>
-      </CustomLink>
-
-      <CustomLink to="/user">
-        <Box p="2">
-          <Heading size="16px">User</Heading>
+          <Heading size="md">X-AirDrop</Heading>
         </Box>
       </CustomLink>
     </>
