@@ -1,4 +1,4 @@
-import { AbsoluteCenter, Box, Card, Heading, Text } from '@chakra-ui/react';
+import { AbsoluteCenter, Box, Heading } from '@chakra-ui/react';
 
 const HomePage = () => {
   return (
