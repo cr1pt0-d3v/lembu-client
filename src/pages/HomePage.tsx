@@ -1,6 +1,9 @@
 import { AbsoluteCenter, Box, Heading } from '@chakra-ui/react';
+import { useStore } from "../store/use-store";
+import { observer } from "mobx-react-lite";
 
-const HomePage = () => {
+const HomePage = observer(() => {
+  const store= useStore();
   return (
     <Box
       minH="80vh"
@@ -13,12 +16,13 @@ const HomePage = () => {
         <Heading color="gray.50" textAlign="center">
           🚗 Welcome to $LEMBU 🚗
         </Heading>
+        {store.isLoggedIn ?store.lembuToken:<></>}
         <Heading size="md" color="gray.50">
           🎉 Join the fastest meme coin revolution in the BASE chain! 🎉
         </Heading>
       </AbsoluteCenter>
     </Box>
   );
-};
+});
 
 export default HomePage;
