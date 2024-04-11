@@ -16,7 +16,7 @@ const HomePage = observer(() => {
         <Heading color="gray.50" textAlign="center">
           🚗 Welcome to $LEMBU 🚗
         </Heading>
-        {store.isLoggedIn ?store.lembuToken:<></>}
+       
         <Heading size="md" color="gray.50">
           🎉 Join the fastest meme coin revolution in the BASE chain! 🎉
         </Heading>

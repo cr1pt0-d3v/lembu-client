@@ -1,148 +1,180 @@
 import { observable, action, runInAction, makeObservable } from "mobx";
-import { createAuthenticationAdapter,AuthenticationStatus } from '@rainbow-me/rainbowkit';
+import { createAuthenticationAdapter, AuthenticationStatus } from '@rainbow-me/rainbowkit';
 import Cookies from "universal-cookie";
+import { axiosClient } from "../services/AxiosClient";
+import { IValidateTokenResponse } from "../interfaces/IValidateTokenResponse";
+import { INonceResponse } from "../interfaces/INonceResponse";
+import { IVerifyAuthentication } from "../interfaces/IVerifyAuthentication";
+import { IVerifyResponse } from "../interfaces/IVerifyResponse";
+import { ITwitterAuthResponse } from "../interfaces/ITwitterAuthResponse";
 
 export class MainStore {
-  lembuToken: string = "";
-  authStatus: AuthenticationStatus;
-  isLoggedIn: boolean = false;
-  accountNotLinked:boolean = false;
-  modalContinueCallback: () => void = () => {};
-  cookie: Cookies;
-  constructor() {
-    makeObservable(this, {
-     
-      isLoggedIn: observable,
-      authStatus:observable,
-      getAuthenticationAdapter: action,
-      verifyAuthentication: action,
-      setAuthenticatedStatus: action,
-      setAccountNotLinked:action
-      
-    });
-   this.authStatus = 'unauthenticated';
-   this.cookie = new Cookies(null, { path: '/' });
-    this.initData();
-  }
-  
-  initData = async () => {
-   var token = this.cookie.get("wen-lembu-token");
-   var address = this.cookie.get("wen-lembu-address");
-   if(token != null && token != ''){
-        const tokenResponse = await fetch(`${import.meta.env.VITE_SERVER_URL}/vaidateToken`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token,address }),
-          });
-          const response = JSON.parse(await tokenResponse.text());
-          if(response["succes"]){
-            this.setAuthenticatedStatus('authenticated');
-            this.lembuToken = token;
-        this.setIsLoggedIn(true);
-          } else {
+    lembuToken: string = "";
+    authStatus: AuthenticationStatus;
+    isLoggedIn: boolean = false;
+    successTwitterLogin:boolean = false;
+    accountIsLinkedToTwitter: boolean = false;
+    twitterUserNameLinkedToAccount:string = "";
+    modalContinueCallback: () => void = () => { };
+    cookie: Cookies;
+    constructor() {
+        makeObservable(this, {
+
+            isLoggedIn: observable,
+            authStatus: observable,
+            getAuthenticationAdapter: action,
+            verifyAuthentication: action,
+            setAuthenticatedStatus: action,
+            setAccountIsLinkedToTwitter: action,
+            setSuccessTwitterLogin: action,
+            setTwitterUserNameLinkedToAccount: action
+
+        });
+        this.authStatus = 'unauthenticated';
+        this.cookie = new Cookies(null, { path: '/' });
+        this.initData();
+    }
+
+    initData = async () => {
+        const queryString = window.location.search;
+        
+        if(queryString != ""){
+            const params = new URLSearchParams(queryString);
+            if(params.get("successTwitterLogin") != null && params.get("successTwitterLogin") === "true")    {
+                this.setSuccessTwitterLogin(true);
+                if(params.get("twitterName") != null && params.get("twitterName") != ""){
+                this.setTwitterUserNameLinkedToAccount(params.get("twitterName")as string);
+                }
+            }
+        }
+        var token = this.cookie.get("wen-lembu-token");
+        var address = this.cookie.get("wen-lembu-address");
+        if (token != null && token != '') {
+
+            var validateTokenResponse = await axiosClient.getWithTokenAsParam("/validateToken", token) as any
+
+            if (validateTokenResponse.status == 200 && validateTokenResponse.data != null) {
+                var response = validateTokenResponse.data as IValidateTokenResponse;
+                if (validateTokenResponse.data) {
+                    this.lembuToken = token;
+                    this.setIsLoggedIn(true);
+                    this.setAccountIsLinkedToTwitter(response.isTwitterAccountLinked);
+                    axiosClient.setToken(token);
+                }
+            } else if (validateTokenResponse.status == 401) {
+                this.setIsLoggedIn(false);
+            }
+            if (validateTokenResponse.status != 200) {
+                this.cleanCookies();
+                this.setIsLoggedIn(false);
+            }
+
+        }
+    };
+
+    getAuthenticationAdapter = () => {
+        return createAuthenticationAdapter({
+            getNonce: async () => {
+                const response = await axiosClient.get("/nonce") as any;
+                if (response.status == 200) {
+                    const parsedResponse = response.data as INonceResponse;
+                    if (parsedResponse.succes) {
+                        return parsedResponse.nonce
+                    }
+                }
+                return "";
+            },
+            createMessage: ({ nonce, address, chainId }) => {
+                return `${window.location.origin} wants you to sign in with your account: ${address}, Sign in with Ethereum to the app, Chain ID: ${chainId}, Nonce: ${nonce}`;
+            },
+            getMessageBody: ({ message }) => {
+                return message;
+            },
+            verify: async (a) => this.verifyAuthentication(a),
+            signOut: async () => {
+                this.setIsLoggedIn(false);
+                this.cleanCookies()
+            },
+        })
+
+
+    };
+
+    async verifyAuthentication({ message, signature }: IVerifyAuthentication) {
+        //regex for eth wallet address
+        const regex = /(0x[a-fA-F0-9]{40})/;
+
+        // Extract wallet address using match() method
+        const matches = message.match(regex);
+
+        // If matches are found, extract the first match (wallet address)
+        const address = matches ? matches[0] : null;
+
+        const verifyResponse = await axiosClient.post("/verify", { message, signature, address }) as any;
+        if (verifyResponse.status == 200) {
+            const parsedResponse = verifyResponse.data as IVerifyResponse;
+            if (parsedResponse.succes && parsedResponse.token != "") {
+                const expirationDate = new Date();
+                expirationDate.setHours(expirationDate.getHours() + 1);
+                this.lembuToken = parsedResponse.token;
+                this.setAccountIsLinkedToTwitter(parsedResponse.twitterHandler != null && parsedResponse.twitterHandler != "");
+                this.cookie.set("wen-lembu-token", this.lembuToken, { expires: expirationDate });
+                this.cookie.set("wen-lembu-address", parsedResponse.address, { expires: expirationDate });
+                this.setTwitterUserNameLinkedToAccount(parsedResponse.twitterHandler)
+                this.setIsLoggedIn(true);
+                axiosClient.setToken(this.lembuToken);
+                return parsedResponse.succes && parsedResponse.token != null && parsedResponse.token != ""
+            }
+        }
+        return false;
+    }
+    setAuthenticatedStatus(status: AuthenticationStatus) {
+        this.authStatus = status
+    }
+
+    setAccountIsLinkedToTwitter(value: boolean) {
+        this.accountIsLinkedToTwitter = value;
+    }
+    setIsLoggedIn(value: boolean) {
+        if (value) {
+            this.setAuthenticatedStatus('authenticated')
+        } else {
             this.setAuthenticatedStatus('unauthenticated')
-        this.setIsLoggedIn(false);
+        }
+        this.isLoggedIn = value;
+
+    }
+
+    handleTwitterLogin = async () => {
+
+        // Redirect to the backend endpoint that initiates the Twitter OAuth process
+        //window.location.href = 'https://localhost:5050/auth/twitter';
+        try {
+            var twitterAuthResponse = await axiosClient.get("/auth/twitter") as any;
+
+            if(twitterAuthResponse.status != 200){
+                throw new Error('Network response was not ok');
+            }
+
+            var parsedResponse = twitterAuthResponse.data as ITwitterAuthResponse;
+
+            if(parsedResponse.succes && parsedResponse.redirectUrl!=null && parsedResponse.redirectUrl != ""){
+                window.location.href = parsedResponse.redirectUrl
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            // Handle error, maybe show an error message to the user
+        }
+    };
+    cleanCookies = () => {
         this.cookie.remove("wen-lembu-token");
-          }
-   }
-  }; 
-
-  getAuthenticationAdapter =()=>{ 
-    return createAuthenticationAdapter({
-    getNonce: async () => {
-      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/nonce`);
-      const parsedResponse = JSON.parse(await response.text())['nonce'];
-      return parsedResponse;
-    },
-    createMessage: ({ nonce, address, chainId }) => {
-      return `${window.location.origin} wants you to sign in with your account: ${address}, Sign in with Ethereum to the app, Chain ID: ${chainId}, Nonce: ${nonce}`;
-    },
-    getMessageBody: ({ message }) => {
-      return message;
-    },
-    verify: async (a) => this.verifyAuthentication(a),
-    signOut: async () => {
-      await fetch('/api/logout');
-      this.setAuthenticatedStatus('unauthenticated')
-      this.setIsLoggedIn(false);
-      this.cookie.remove("wen-lembu-token");
-    },
-  })
-
-
-};
-
-  async verifyAuthentication({ message, signature }){
-    //regex for eth wallet address
-    const regex = /(0x[a-fA-F0-9]{40})/;
-  
-    // Extract wallet address using match() method
-    const matches = message.match(regex);
-
-    // If matches are found, extract the first match (wallet address)
-    const address = matches ? matches[0] : null;
-
-    const verifyRes = await fetch(`${import.meta.env.VITE_SERVER_URL}/verify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message, signature, address }),
-    });
-    const response = JSON.parse(await verifyRes.text());
-    if(response['succes'] && response['token'] != null){
-        const expirationDate = new Date();
-    expirationDate.setHours(expirationDate.getHours()+1);
-        this.lembuToken = response['token'];
-        this.setAccountNotLinked(response["twitterHandler"]==null);
-        this.cookie.set("wen-lembu-token", this.lembuToken, { expires: expirationDate });
-        this.cookie.set("wen-lembu-address", response["address"], { expires: expirationDate });
-        this.setAuthenticatedStatus('authenticated')
-        this.setIsLoggedIn(true);
+        this.cookie.remove("wen-lembu-address");
     }
-    return response['succes'] && response['token'] != null;
-  }
-setAuthenticatedStatus(status:AuthenticationStatus){
-    this.authStatus = status 
- }
-
- setAccountNotLinked(value:boolean){
-this.accountNotLinked = value;
- }
-  setIsLoggedIn(value: boolean) {
-    this.isLoggedIn = value;
-   
-    if (!value) {
-        this.setAuthenticatedStatus('unauthenticated');
-    } else {
-      //this.loggOut(false);
+    setSuccessTwitterLogin = (value:boolean)=>{
+        this.successTwitterLogin = value;
     }
-  }
-
-  handleLogin = async () => {
     
-    // Redirect to the backend endpoint that initiates the Twitter OAuth process
-    //window.location.href = 'https://localhost:5050/auth/twitter';
-    try {
-      const response = await fetch('https://localhost:5050/auth/twitter', {
-        method: 'GET',
-        headers: {
-          'x-lembu-token': this.lembuToken,
-          // Add any other headers needed for your request
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      // Assuming the response contains the URL to redirect to
-      const responseData = await response.json();
-      const redirectUrl = responseData.redirectUrl;
-
-      // Redirect the user
-      window.location.href = redirectUrl;
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      // Handle error, maybe show an error message to the user
+    setTwitterUserNameLinkedToAccount = (value:string)=>{
+        this.twitterUserNameLinkedToAccount = value;
     }
-  };
 }

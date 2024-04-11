@@ -37,7 +37,8 @@ const Navbar = observer(() => {
         </Flex>
         <DexScreenerLink />
         <BuyLembuButton />
-        {store.isLoggedIn && store.accountNotLinked?<button style={{color:"white"}} onClick={store.handleLogin}>Link Twitter Account</button>:<></>}
+        {store.isLoggedIn && !store.accountIsLinkedToTwitter?<button style={{color:"white"}} onClick={store.handleTwitterLogin}>Link Twitter Account</button>:<></>}
+        {store.isLoggedIn && store.successTwitterLogin?<div style={{color:"white"}}>Twitter account linked to this wallet is: {store.twitterUserNameLinkedToAccount}</div>:<></>}
         <Spacer />
         <ConnectButton />
       </Flex>
