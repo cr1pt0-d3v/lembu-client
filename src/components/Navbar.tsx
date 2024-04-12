@@ -16,12 +16,10 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import BuyLembuButton from './BuyLembuButton';
 import LembuLogo from './LembuLogo';
 import DexScreenerLink from './DexScreenerLink';
-import { useStore } from "../store/use-store";
-import { observer } from "mobx-react-lite";
+import { observer } from 'mobx-react-lite';
 
 const Navbar = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const store = useStore();
   return (
     <Box minWidth="max-content" bg="gray.900">
       <Flex
@@ -37,8 +35,6 @@ const Navbar = observer(() => {
         </Flex>
         <DexScreenerLink />
         <BuyLembuButton />
-        {store.isLoggedIn && !store.accountIsLinkedToTwitter?<button style={{color:"white"}} onClick={store.handleTwitterLogin}>Link Twitter Account</button>:<></>}
-        {store.isLoggedIn && store.successTwitterLogin?<div style={{color:"white"}}>Twitter account linked to this wallet is: {store.twitterUserNameLinkedToAccount}</div>:<></>}
         <Spacer />
         <ConnectButton />
       </Flex>
@@ -83,7 +79,6 @@ const Navbar = observer(() => {
               <RoutesComponent />
               <DexScreenerLink />
               <BuyLembuButton />
-              
             </Flex>
           </DrawerBody>
         </DrawerContent>
