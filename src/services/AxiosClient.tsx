@@ -1,18 +1,18 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance } from 'axios';
 
 const baseAxiosConfig = {
   timeout: 60000,
   headers: {
     common: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
     },
   },
 };
 
 class AxiosClient {
   client: AxiosInstance;
- //  url: string = "https://localhost:5050/api/";
+  //  url: string = "https://localhost:5050/api/";
   url: string = `${import.meta.env.VITE_SERVER_URL}`;
   token: string;
   constructor() {
@@ -26,23 +26,23 @@ class AxiosClient {
           return { status: 401 };
         }
         return error;
-      }
+      },
     );
 
-    this.token = "";
+    this.token = '';
   }
 
   get = async (endpoint: string) => {
     try {
-     
       const result = this.client.get(this.url + endpoint, {
         headers: {
-          "x-lembu-token": this.token,
+          'x-lembu-token': this.token,
         },
       });
       if (!result) {
-        throw new Error("failed to get result from API");
+        throw new Error('failed to get result from API');
       }
+      console.log(await result);
       return result;
     } catch (error) {
       return false;
@@ -52,11 +52,11 @@ class AxiosClient {
     try {
       const result = this.client.get(this.url + endpoint, {
         headers: {
-          "x-lembu-token": token,
+          'x-lembu-token': token,
         },
       });
       if (!result) {
-        throw new Error("failed to get result from API");
+        throw new Error('failed to get result from API');
       }
       return result;
     } catch (error) {
@@ -67,11 +67,11 @@ class AxiosClient {
     try {
       const result = await this.client.post(this.url + endpoint, request, {
         headers: {
-          "x-lembu-token": this.token,
+          'x-lembu-token': this.token,
         },
       });
       if (!result) {
-        throw new Error("failed to get result from API");
+        throw new Error('failed to get result from API');
       }
       return result;
     } catch (error) {
