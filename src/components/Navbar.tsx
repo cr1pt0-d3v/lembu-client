@@ -16,8 +16,9 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import BuyLembuButton from './BuyLembuButton';
 import LembuLogo from './LembuLogo';
 import DexScreenerLink from './DexScreenerLink';
+import { observer } from 'mobx-react-lite';
 
-const Navbar = () => {
+const Navbar = observer(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Box minWidth="max-content" bg="gray.900">
@@ -84,6 +85,6 @@ const Navbar = () => {
       </Drawer>
     </Box>
   );
-};
+});
 
 export default Navbar;
