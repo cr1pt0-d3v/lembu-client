@@ -3,7 +3,7 @@ import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import Footer from './components/Footer';
 import AirdropPage from './pages/AirdropPage';
-import ModalWindow from './pages/Modal';
+import ModalWindow from './components/Modal';
 
 function App() {
   return (
