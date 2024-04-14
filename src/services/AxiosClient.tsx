@@ -42,7 +42,6 @@ class AxiosClient {
       if (!result) {
         throw new Error('failed to get result from API');
       }
-      console.log(await result);
       return result;
     } catch (error) {
       return false;
