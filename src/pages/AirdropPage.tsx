@@ -11,22 +11,16 @@ import {
   TableContainer,
   Center,
 } from '@chakra-ui/react';
-/* import React, { useEffect } from 'react';
-import { axiosClient } from '../services/AxiosClient'; */
+import { useStore } from '../store/use-store';
+import { observer } from 'mobx-react-lite';
+import { useEffect } from 'react';
 
-const AirdropPage = () => {
-  /* const [userTwitterList, setUserTwitterList] = React.useState([]);
+const AirdropPage = observer(() => {
+  const store = useStore();
 
   useEffect(() => {
-    axiosClient
-      .get('/data/getAllTimeWinners')
-      .then((res) => {
-        console.log('useEffect ', res as any);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []); */
+    store.getAllTimeWinners();
+  }, []);
   return (
     <Box minH="80vh" bg="gray.900">
       <Center py={12}>
@@ -49,16 +43,18 @@ const AirdropPage = () => {
               </Tr>
             </Thead>
             <Tbody>
-              <Tr>
-                <Td textAlign="center">inches</Td>
-                <Td textAlign="center">millimetres (mm)</Td>
-              </Tr>
+              {store.allTimeWinners.map((winner) => (
+                <Tr>
+                  <Td textAlign="center">{winner.twitterHandler}</Td>
+                  <Td textAlign="center">{winner.gainsOverTime}</Td>
+                </Tr>
+              ))}
             </Tbody>
           </Table>
         </TableContainer>
       </Center>
     </Box>
   );
-};
+});
 
 export default AirdropPage;

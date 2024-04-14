@@ -8,7 +8,7 @@ import ModalWindow from './pages/Modal';
 function App() {
   return (
     <>
-    <ModalWindow/>
+      <ModalWindow />
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
