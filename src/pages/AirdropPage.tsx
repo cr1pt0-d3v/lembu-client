@@ -44,7 +44,7 @@ const AirdropPage = observer(() => {
             </Thead>
             <Tbody>
               {store.allTimeWinners.map((winner) => (
-                <Tr>
+                <Tr key={winner.twitterHandler}>
                   <Td textAlign="center">{winner.twitterHandler}</Td>
                   <Td textAlign="center">{winner.gainsOverTime}</Td>
                 </Tr>
