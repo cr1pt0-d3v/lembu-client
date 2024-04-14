@@ -27,10 +27,15 @@ const AirdropPage = observer(() => {
         <Heading color="gray.50">Leaderboard</Heading>
       </Center>
       <Center>
-        <TableContainer color="gray.50" minW={500} border="2px solid gray">
+        <TableContainer
+          color="gray.50"
+          minW={['320']}
+          border="2px solid gray"
+          m={2}
+        >
           <Table size="lg">
             <TableCaption>
-              The table shows our most active members on X / Twitter
+              The table shows most active members on X
             </TableCaption>
             <Thead>
               <Tr>
