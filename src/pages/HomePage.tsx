@@ -52,11 +52,15 @@ const HomePage = observer(() => {
             ) : (
               <></>
             )}
-            {store.isLoggedIn && store.successTwitterLogin ? (
-              <Heading size="md" color="gray.50" textAlign="center">
-                Twitter account linked to the wallet is:
-                {store.twitterUserNameLinkedToAccount}
-              </Heading>
+            {store.isLoggedIn && store.accountIsLinkedToTwitter ? (
+              <>
+                <Heading size="md" color="gray.50" textAlign="center">
+                  Twitter account linked to the wallet is:
+                </Heading>
+                <Heading color="gray.50">
+                  {store.twitterUserNameLinkedToAccount}
+                </Heading>
+              </>
             ) : (
               <></>
             )}
