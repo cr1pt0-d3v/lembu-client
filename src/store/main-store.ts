@@ -100,7 +100,7 @@ export class MainStore {
   getAuthenticationAdapter = () => {
     return createAuthenticationAdapter({
       getNonce: async () => {
-        const response = (await axiosClient.get('/nonce')) as any;
+        const response = (await axiosClient.getWithoutToken('/nonce')) as any;
         if (response.status == 200) {
           const parsedResponse = response.data as INonceResponse;
           if (parsedResponse.succes) {
@@ -133,7 +133,7 @@ export class MainStore {
     // If matches are found, extract the first match (wallet address)
     const address = matches ? matches[0] : null;
 
-    const verifyResponse = (await axiosClient.post('/verify', {
+    const verifyResponse = (await axiosClient.postWithoutToken('/verify', {
       message,
       signature,
       address,

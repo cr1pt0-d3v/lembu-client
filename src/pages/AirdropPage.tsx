@@ -20,7 +20,7 @@ const AirdropPage = observer(() => {
 
   useEffect(() => {
     store.getAllTimeWinners();
-  }, []);
+  }, [store.isLoggedIn]);
   return (
     <Box minH="80vh" bg="gray.900">
       <Center py={12}>
