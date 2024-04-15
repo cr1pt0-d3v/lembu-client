@@ -19,7 +19,7 @@ const AirdropPage = observer(() => {
   const store = useStore();
 
   useEffect(() => {
-    store.getAllTimeWinners();
+    store.getAllUsers();
   }, [store.isLoggedIn]);
   return (
     <Box minH="80vh" bg="gray.900">

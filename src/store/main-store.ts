@@ -22,6 +22,7 @@ export class MainStore {
   accountIsLinkedToTwitter: boolean = false;
   twitterUserNameLinkedToAccount: string = '';
   allTimeWinners: IAllTimeWinners[] = [];
+  allUsers: IAllTimeWinners[] = [];
   modalContinueCallback: () => void = () => {};
   cookie: Cookies;
   constructor() {
@@ -29,6 +30,7 @@ export class MainStore {
       isLoggedIn: observable,
       authStatus: observable,
       allTimeWinners: observable.deep,
+      allUsers: observable.deep,
       getAuthenticationAdapter: action,
       verifyAuthentication: action,
       setAuthenticatedStatus: action,
@@ -37,6 +39,7 @@ export class MainStore {
       setTwitterUserNameLinkedToAccount: action,
       setOpenModal: action,
       setAllTimeWinners: action,
+      setAllUsers: action,
     });
     this.authStatus = 'unauthenticated';
     this.cookie = new Cookies(null, { path: '/' });
@@ -140,7 +143,7 @@ export class MainStore {
     })) as any;
     if (verifyResponse.status == 200) {
       const parsedResponse = verifyResponse.data as IVerifyResponse;
-      console.log('##### parsedResponse ######', parsedResponse);
+
       if (parsedResponse.succes && parsedResponse.token != '') {
         const expirationDate = new Date();
         expirationDate.setHours(expirationDate.getHours() + 1);
@@ -248,6 +251,20 @@ export class MainStore {
   };
 
   setAllTimeWinners = (value: IAllTimeWinners[]) => {
+    this.allTimeWinners = value;
+  };
+
+  getAllUsers = async () => {
+    const response = (await axiosClient.get('/data/getAllUsers/1')) as any;
+    if (response.status == 200) {
+      const parsedResponse = response.data as IAllTimeWinners[];
+      if (parsedResponse) {
+        this.setAllTimeWinners(parsedResponse);
+      }
+    }
+  };
+
+  setAllUsers = (value: IAllTimeWinners[]) => {
     this.allTimeWinners = value;
   };
 }
