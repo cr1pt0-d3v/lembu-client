@@ -1,4 +1,4 @@
-export interface IAllTimeWinners {
+export interface ILembuUser {
   id: string;
   joinDate: Date;
   twitterHandler: string;
