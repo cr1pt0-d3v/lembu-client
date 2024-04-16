@@ -40,6 +40,7 @@ export class MainStore {
             setOpenModal: action,
             setAllTimeWinners: action,
             setAllUsers: action,
+            setIsLoggedIn: action
         });
         this.authStatus = 'unauthenticated';
         this.cookie = new Cookies(null, { path: '/' });
@@ -87,7 +88,11 @@ export class MainStore {
                 if (validateTokenResponse.data) {
                     this.lembuToken = token;
                     this.setIsLoggedIn(true);
+
                     this.setAccountIsLinkedToTwitter(response.isTwitterAccountLinked);
+                    if (response.isTwitterAccountLinked) {
+                        this.setTwitterUserNameLinkedToAccount(response.twitterAccount)
+                    }
                     axiosClient.setToken(token);
                 }
             } else if (validateTokenResponse.status == 401) {
@@ -127,48 +132,55 @@ export class MainStore {
     };
 
     async verifyAuthentication({ message, signature }: IVerifyAuthentication) {
-        //regex for eth wallet address
-        const regex = /(0x[a-fA-F0-9]{40})/;
+        try {
 
-        // Extract wallet address using match() method
-        const matches = message.match(regex);
 
-        // If matches are found, extract the first match (wallet address)
-        const address = matches ? matches[0] : null;
+            //regex for eth wallet address
+            const regex = /(0x[a-fA-F0-9]{40})/;
 
-        const verifyResponse = (await axiosClient.postWithoutToken('/verify', {
-            message,
-            signature,
-            address,
-        })) as any;
-        if (verifyResponse.status == 200) {
-            const parsedResponse = verifyResponse.data as IVerifyResponse;
+            // Extract wallet address using match() method
+            const matches = message.match(regex);
 
-            if (parsedResponse.succes && parsedResponse.token != '') {
-                const expirationDate = new Date();
-                expirationDate.setHours(expirationDate.getHours() + 1);
-                this.lembuToken = parsedResponse.token;
-                this.setAccountIsLinkedToTwitter(
-                    parsedResponse.twitterHandler != null &&
-                    parsedResponse.twitterHandler != '',
-                );
-                this.cookie.set('wen-lembu-token', this.lembuToken, {
-                    expires: expirationDate,
-                });
-                this.cookie.set('wen-lembu-address', parsedResponse.address, {
-                    expires: expirationDate,
-                });
-                this.setTwitterUserNameLinkedToAccount(parsedResponse.twitterHandler);
-                this.setIsLoggedIn(true);
-                axiosClient.setToken(this.lembuToken);
-                return (
-                    parsedResponse.succes &&
-                    parsedResponse.token != null &&
-                    parsedResponse.token != ''
-                );
+            // If matches are found, extract the first match (wallet address)
+            const address = matches ? matches[0] : null;
+
+            const verifyResponse = (await axiosClient.postWithoutToken('/verify', {
+                message,
+                signature,
+                address,
+            })) as any;
+            if (verifyResponse.status == 200) {
+                const parsedResponse = verifyResponse.data as IVerifyResponse;
+
+                if (parsedResponse.succes && parsedResponse.token != '') {
+                    const expirationDate = new Date();
+                    expirationDate.setHours(expirationDate.getHours() + 1);
+                    this.lembuToken = parsedResponse.token;
+                    this.setAccountIsLinkedToTwitter(
+                        parsedResponse.twitterHandler != null &&
+                        parsedResponse.twitterHandler != '',
+                    );
+                    this.cookie.set('wen-lembu-token', this.lembuToken, {
+                        expires: expirationDate,
+                    });
+                    this.cookie.set('wen-lembu-address', parsedResponse.address, {
+                        expires: expirationDate,
+                    });
+                    this.setTwitterUserNameLinkedToAccount(parsedResponse.twitterHandler);
+                    this.setIsLoggedIn(true);
+                    axiosClient.setToken(this.lembuToken);
+                    return (
+                        parsedResponse.succes &&
+                        parsedResponse.token != null &&
+                        parsedResponse.token != ''
+                    );
+                }
             }
+            return false;
+        } catch (error) {
+            console.log("error->" + error);
+            return false;
         }
-        return false;
     }
     setAuthenticatedStatus(status: AuthenticationStatus) {
         this.authStatus = status;
