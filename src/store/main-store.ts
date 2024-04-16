@@ -11,6 +11,7 @@ import { IVerifyAuthentication } from '../interfaces/IVerifyAuthentication';
 import { IVerifyResponse } from '../interfaces/IVerifyResponse';
 import { ITwitterAuthResponse } from '../interfaces/ITwitterAuthResponse';
 import { ILembuUser } from '../interfaces/ILembuUser';
+import readXlsxFile from 'read-excel-file'
 
 export class MainStore {
     lembuToken: string = '';
@@ -315,4 +316,13 @@ export class MainStore {
     setAllUsers = (value: ILembuUser[]) => {
         this.allTimeWinners = value;
     };
+
+    readXls = () => {
+        fetch('URL_OF_XSLS')
+            .then(response => response.blob())
+            .then(blob => readXlsxFile(blob))
+            .then((rows) => {
+                console.log(rows.length);
+            })
+    }
 }
