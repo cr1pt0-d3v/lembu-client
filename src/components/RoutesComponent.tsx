@@ -33,6 +33,12 @@ const RoutesComponent = () => {
           <Heading size="md">X-AirDrop</Heading>
         </Box>
       </CustomLink>
+
+      <CustomLink to="/contests">
+        <Box p="2">
+          <Heading size="md">Active Contests</Heading>
+        </Box>
+      </CustomLink>
     </>
   );
 };
