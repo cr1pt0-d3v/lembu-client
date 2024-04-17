@@ -48,9 +48,14 @@ const AirdropPage = observer(() => {
               </Tr>
             </Thead>
             <Tbody>
-              {store.allTimeWinners.map((winner) => (
-                <Tr key={winner.twitterHandler}>
-                  <Td textAlign="center">{winner.twitterHandler != "" && winner.twitterHandler != null ? winner.twitterHandler : "Unknown $LEMBU fan"}</Td>
+              {store.allTimeWinners.map((winner, idx) => (
+                <Tr key={idx}>
+                  <Td textAlign="center">
+                    {winner.twitterHandler != '' &&
+                    winner.twitterHandler != null
+                      ? winner.twitterHandler
+                      : 'Unknown $LEMBU fan'}
+                  </Td>
                   <Td textAlign="center">{winner.gainsOverTime}</Td>
                 </Tr>
               ))}
