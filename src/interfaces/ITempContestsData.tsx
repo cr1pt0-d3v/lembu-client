@@ -1,6 +1,6 @@
-import { ITempUserDetails } from "./ITempUserDetails";
+import { ITempUserDetails } from './ITempUserDetails';
 
-export interface ITempContestsData{
-    contestId:string;
-    contestUsers:ITempUserDetails[]
+export interface ITempContestsData {
+  contestId: string;
+  contestUsers: ITempUserDetails[];
 }

@@ -35,8 +35,11 @@ const AirdropPage = observer(() => {
         >
           <Table size="lg">
             <TableCaption>
-              {store.isLoggedIn ? <>The table shows most active members on X</> : <>Connet your wallet in order to see the board</>}
-              
+              {store.isLoggedIn ? (
+                <>The table shows most active members on X</>
+              ) : (
+                <>Connet your wallet in order to see the board</>
+              )}
             </TableCaption>
             <Thead>
               <Tr>
@@ -49,9 +52,14 @@ const AirdropPage = observer(() => {
               </Tr>
             </Thead>
             <Tbody>
-              {store.allTimeWinners.map((winner) => (
-                <Tr key={winner.twitterHandler}>
-                  <Td textAlign="center">{winner.twitterHandler != "" && winner.twitterHandler != null ? winner.twitterHandler : "Unknown $LEMBU fan"}</Td>
+              {store.allTimeWinners.map((winner, idx) => (
+                <Tr key={idx}>
+                  <Td textAlign="center">
+                    {winner.twitterHandler != '' &&
+                    winner.twitterHandler != null
+                      ? winner.twitterHandler
+                      : 'Unknown $LEMBU fan'}
+                  </Td>
                   <Td textAlign="center">{winner.gainsOverTime}</Td>
                 </Tr>
               ))}

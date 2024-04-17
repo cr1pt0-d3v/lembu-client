@@ -1,4 +1,4 @@
-export interface IVerifyAuthentication{
-    message:string;
-    signature:string;
+export interface IVerifyAuthentication {
+  message: string;
+  signature: string;
 }

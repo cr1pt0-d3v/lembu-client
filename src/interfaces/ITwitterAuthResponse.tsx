@@ -1,6 +1,5 @@
+import { IBaseResponse } from './IBaseResponse';
 
-import { IBaseResponse } from "./IBaseResponse";
-
-export interface ITwitterAuthResponse extends IBaseResponse{
-    redirectUrl:string;
+export interface ITwitterAuthResponse extends IBaseResponse {
+  redirectUrl: string;
 }

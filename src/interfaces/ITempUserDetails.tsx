@@ -1,4 +1,4 @@
 export interface ITempUserDetails {
-    userTwitterHandler:string;
-    userScore:number;
+  userTwitterHandler: string;
+  userScore: number;
 }
