@@ -13,6 +13,7 @@ import { ITwitterAuthResponse } from '../interfaces/ITwitterAuthResponse';
 import { ILembuUser } from '../interfaces/ILembuUser';
 import readXlsxFile from 'read-excel-file'
 import { ContestType, IContest } from '../interfaces/IContest';
+import { ITempContestsData } from '../interfaces/ITempContestsData';
 
 export class MainStore {
     lembuToken: string = '';
@@ -26,6 +27,7 @@ export class MainStore {
     allTimeWinners: ILembuUser[] = [];
     allUsers: ILembuUser[] = [];
     activeContests: IContest[] = [];
+    contestsTempData:ITempContestsData[]=[];
     modalContinueCallback: () => void = () => { };
     cookie: Cookies;
     constructor() {
@@ -35,6 +37,7 @@ export class MainStore {
             allTimeWinners: observable.deep,
             allUsers: observable.deep,
             activeContests: observable.deep,
+            contestsTempData:observable.deep,
             getAuthenticationAdapter: action,
             verifyAuthentication: action,
             setAuthenticatedStatus: action,
@@ -45,7 +48,8 @@ export class MainStore {
             setAllTimeWinners: action,
             setAllUsers: action,
             setIsLoggedIn: action,
-            setActiveContests: action
+            setActiveContests: action,
+            setContestsTempData:action
         });
         this.authStatus = 'unauthenticated';
         this.cookie = new Cookies(null, { path: '/' });
@@ -359,6 +363,26 @@ export class MainStore {
                 return `All tweets that tag @${contest.tag} and contains the hashtag ${contest.hastagText?.toUpperCase()} will automatically be part of the contest!`
                 break;
         }
+    }
+    getContestsTempData = async ()=>{
+        try {
+            var activeContestsTempData = [] as ITempContestsData[];
+
+            var response = (await axiosClient.getWithoutToken(`/contest/getActiveContestsTempData`)) as any;
+            if (response.status == 200) {
+                activeContestsTempData = response.data as ITempContestsData[];
+
+
+                this.setContestsTempData(activeContestsTempData);
+            } else {
+                this.setContestsTempData([]);
+            }
+        } catch (error) {
+            this.setContestsTempData([]);
+        }
+    }
+    setContestsTempData = (data:ITempContestsData[])=>{
+        this.contestsTempData = data;
     }
     readXls = () => {
         fetch('URL_OF_XSLS')
