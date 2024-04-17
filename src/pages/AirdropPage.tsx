@@ -35,8 +35,11 @@ const AirdropPage = observer(() => {
         >
           <Table size="lg">
             <TableCaption>
-              {store.isLoggedIn ? <>The table shows most active members on X</> : <>Connet your wallet in order to see the board</>}
-              
+              {store.isLoggedIn ? (
+                <>The table shows most active members on X</>
+              ) : (
+                <>Connet your wallet in order to see the board</>
+              )}
             </TableCaption>
             <Thead>
               <Tr>

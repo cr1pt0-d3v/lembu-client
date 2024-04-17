@@ -1,5 +1,5 @@
-import { IBaseResponse } from "./IBaseResponse";
+import { IBaseResponse } from './IBaseResponse';
 
-export interface INonceResponse extends IBaseResponse{
-    nonce:string;
+export interface INonceResponse extends IBaseResponse {
+  nonce: string;
 }

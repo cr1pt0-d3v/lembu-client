@@ -13,7 +13,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/airdrop" element={<AirdropPage />} /> 
+        <Route path="/airdrop" element={<AirdropPage />} />
         <Route path="/contests" element={<ContestPage />} />
       </Routes>
       <Footer />
