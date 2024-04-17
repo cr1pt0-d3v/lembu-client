@@ -15,16 +15,17 @@ import { useStore } from '../store/use-store';
 import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
 
-const AirdropPage = observer(() => {
+
+const ContestPage = observer(() => {
   const store = useStore();
 
   useEffect(() => {
-    store.getAllUsers();
-  }, [store.isLoggedIn]);
+    store.getActiveContests();
+  }, []);
   return (
     <Box minH="80vh" bg="gray.900">
       <Center py={12}>
-        <Heading color="gray.50">Leaderboard</Heading>
+        <Heading color="gray.50">Active Contest</Heading>
       </Center>
       <Center>
         <TableContainer
@@ -35,24 +36,27 @@ const AirdropPage = observer(() => {
         >
           <Table size="lg">
             <TableCaption>
-              {store.isLoggedIn ? <>The table shows most active members on X</> : <>Connet your wallet in order to see the board</>}
-              
+              {store.activeContests.length > 0 ? "All active contests":"There is no contest running at this time!"}
             </TableCaption>
             <Thead>
               <Tr>
-                <Th color="#FF0080" textAlign="center">
-                  Username
+              <Th color="#FF0080" textAlign="center">
+                  Contest
                 </Th>
                 <Th color="#FF0080" textAlign="center">
-                  Points
+                  Description 
+                </Th>
+                <Th color="#FF0080" textAlign="center">
+                  End Date
                 </Th>
               </Tr>
             </Thead>
             <Tbody>
-              {store.allTimeWinners.map((winner) => (
-                <Tr key={winner.twitterHandler}>
-                  <Td textAlign="center">{winner.twitterHandler != "" && winner.twitterHandler != null ? winner.twitterHandler : "Unknown $LEMBU fan"}</Td>
-                  <Td textAlign="center">{winner.gainsOverTime}</Td>
+              {store.activeContests.map((contest,index) => (
+                <Tr key={contest.id}>
+                  <Td textAlign="center">{`No. ${index+1}`}</Td>
+                  <Td textAlign="center">{store.getContestDescription(contest)}</Td>
+                  <Td textAlign="center">{new Date(contest.contestEndDate).toLocaleString()}</Td>
                 </Tr>
               ))}
             </Tbody>
@@ -63,4 +67,4 @@ const AirdropPage = observer(() => {
   );
 });
 
-export default AirdropPage;
+export default ContestPage;

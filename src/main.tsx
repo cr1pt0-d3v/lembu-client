@@ -9,15 +9,21 @@ import './index.css';
 
 import '@rainbow-me/rainbowkit/styles.css';
 import MainApp from './MainApp.tsx';
-
+import { WagmiProvider } from 'wagmi';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { config } from './wagmi.ts';
 globalThis.Buffer = Buffer;
 
 const mainStore = new MainStore();
-
+const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <StoreProvider value={mainStore}>
-      <MainApp />
-    </StoreProvider>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <StoreProvider value={mainStore}>
+          <MainApp />
+        </StoreProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   </React.StrictMode>,
 );
