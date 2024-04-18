@@ -2,7 +2,6 @@ import { useStore } from './store/use-store.ts';
 import { observer } from 'mobx-react-lite';
 import App from './App.tsx';
 
-
 import { ChakraProvider } from '@chakra-ui/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import {
@@ -11,11 +10,9 @@ import {
   darkTheme,
 } from '@rainbow-me/rainbowkit';
 
-
 const MainApp = observer(() => {
   const store = useStore();
   return (
-
     <RainbowKitAuthenticationProvider
       adapter={store.getAuthenticationAdapter()}
       status={store.authStatus}
@@ -39,7 +36,6 @@ const MainApp = observer(() => {
         </ChakraProvider>
       </RainbowKitProvider>
     </RainbowKitAuthenticationProvider>
-
   );
 });
 export default MainApp;

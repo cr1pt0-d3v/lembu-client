@@ -33,7 +33,6 @@ class AxiosClient {
   }
   getWithoutToken = async (endpoint: string) => {
     try {
-
       const result = this.client.get(this.url + endpoint, {
         headers: {
           'x-lembu-token': this.token,
@@ -43,14 +42,13 @@ class AxiosClient {
         throw new Error('failed to get result from API');
       }
       return result;
-
     } catch (error) {
       return false;
     }
   };
   get = async (endpoint: string) => {
     try {
-      if (this.token != "") {
+      if (this.token != '') {
         const result = this.client.get(this.url + endpoint, {
           headers: {
             'x-lembu-token': this.token,
@@ -60,8 +58,7 @@ class AxiosClient {
           throw new Error('failed to get result from API');
         }
         return result;
-      }
-      else return false;
+      } else return false;
     } catch (error) {
       return false;
     }
@@ -83,7 +80,7 @@ class AxiosClient {
   };
   post = async (endpoint: string, request: any) => {
     try {
-      if (this.token != "") {
+      if (this.token != '') {
         const result = await this.client.post(this.url + endpoint, request, {
           headers: {
             'x-lembu-token': this.token,
@@ -93,9 +90,7 @@ class AxiosClient {
           throw new Error('failed to get result from API');
         }
         return result;
-        ;
-      }
-      else return false;
+      } else return false;
     } catch (error) {
       return false;
     }
@@ -103,7 +98,6 @@ class AxiosClient {
 
   postWithoutToken = async (endpoint: string, request: any) => {
     try {
-
       const result = await this.client.post(this.url + endpoint, request, {
         headers: {
           'x-lembu-token': this.token,
@@ -113,8 +107,6 @@ class AxiosClient {
         throw new Error('failed to get result from API');
       }
       return result;
-      ;
-
     } catch (error) {
       return false;
     }
