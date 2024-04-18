@@ -60,7 +60,7 @@ const AirdropPage = observer(() => {
                       ? winner.twitterHandler
                       : 'Unknown $LEMBU fan'}
                   </Td>
-                  <Td textAlign="center">{winner.gainsOverTime}</Td>
+                  <Td textAlign="center">{winner.gainsOverTime.toFixed(2)}</Td>
                 </Tr>
               ))}
             </Tbody>

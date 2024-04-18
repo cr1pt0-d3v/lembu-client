@@ -7,7 +7,13 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "biome check .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\""
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
@@ -44,6 +50,9 @@
     "@vitejs/plugin-react": "^4.1.0",
     "@wagmi/cli": "latest",
     "buffer": "^6.0.3",
+    "husky": "^9.0.11",
+    "prettier": "^3.2.5",
+    "pretty-quick": "^4.0.0",
     "typescript": "^5.2.2",
     "vite": "^4.4.9"
   }
